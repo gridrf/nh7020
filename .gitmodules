@@ -1,0 +1,3 @@
+[submodule "hdl"]
+	path = hdl
+	url = https://github.com/gridrf/hdl.git
