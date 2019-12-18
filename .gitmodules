@@ -9,3 +9,7 @@
 	path = u-boot-xlnx
 	url = https://github.com/gridrf/u-boot-xlnx.git
 	branch = pluto
+[submodule "linux"]
+	path = linux
+	url = https://github.com/gridrf/linux.git
+	branch = master
