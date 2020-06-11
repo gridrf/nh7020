@@ -32,7 +32,7 @@ endif
 
 ifeq ($(findstring $(TARGET),$(SUPPORTED_TARGETS)),)
 all:
-	@echo "Invalid `TARGET variable ; valid values are: pluto, sidekiqz2" &&
+	@echo "Invalid `TARGET variable ; valid values are: nh7020" &&
 	exit 1
 else
 all: clean-build $(TARGETS) zip-all
