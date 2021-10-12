@@ -12,7 +12,7 @@ UBOOT_VERSION=$(shell echo -n "NH7020 " && cd u-boot-xlnx)
 HAVE_VIVADO= $(shell bash -c "source $(VIVADO_SETTINGS) > /dev/null 2>&1 && vivado -version > /dev/null 2>&1 && echo 1 || echo 0")
 
 TARGET ?= nh7020
-SUPPORTED_TARGETS:=nh7020
+SUPPORTED_TARGETS:=nh7020 nh7020_lcd
 
 # Include target specific constants
 include scripts/$(TARGET).mk
@@ -32,7 +32,7 @@ endif
 
 ifeq ($(findstring $(TARGET),$(SUPPORTED_TARGETS)),)
 all:
-	@echo "Invalid `TARGET variable ; valid values are: nh7020" &&
+	@echo "Invalid `TARGET variable ; valid values are: nh7020 nh7020_lcd" &&
 	exit 1
 else
 all: clean-build $(TARGETS) zip-all
@@ -79,7 +79,7 @@ build/zImage: linux/arch/arm/boot/zImage  | build
 
 ### Device Tree ###
 
-linux/arch/arm/boot/dts/%.dtb: linux/arch/arm/boot/dts/zynq-nh7020-box.dts  linux/arch/arm/boot/dts/zynq-nh7020.dtsi
+linux/arch/arm/boot/dts/%.dtb: linux/arch/arm/boot/dts/%.dts  linux/arch/arm/boot/dts/zynq-nh7020.dtsi
 	make -C linux -j $(NCORES) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) $(notdir $@)
 
 build/%.dtb: linux/arch/arm/boot/dts/%.dtb | build
@@ -103,8 +103,8 @@ build/$(TARGET).itb: u-boot-xlnx/tools/mkimage build/zImage build/rootfs.cpio.gz
 
 build/system_top.hdf:  | build
 ifeq (1, ${HAVE_VIVADO})
-	bash -c "source $(VIVADO_SETTINGS) && make -C hdl/projects/nh7020/ccbox_lvds && cp hdl/projects/nh7020/ccbox_lvds/nh7020_ccbox_lvds.sdk/system_top.hdf $@"
-	unzip -l $@ | grep -q ps7_init || cp hdl/projects/nh7020/ccbox_lvds/nh7020_ccbox_lvds.srcs/sources_1/bd/system/ip/system_sys_ps7_0/ps7_init* build/
+	bash -c "source $(VIVADO_SETTINGS) && make -C hdl/projects/$(TARGET)/ccbox_lvds && cp hdl/projects/$(TARGET)/ccbox_lvds/nh7020_ccbox_lvds.sdk/system_top.hdf $@"
+	unzip -l $@ | grep -q ps7_init || cp hdl/projects/$(TARGET)/ccbox_lvds/nh7020_ccbox_lvds.srcs/sources_1/bd/system/ip/system_sys_ps7_0/ps7_init* build/
 else
 ifneq ($(HDF_URL),)
 	wget -T 3 -t 1 -N --directory-prefix build $(HDF_URL)
